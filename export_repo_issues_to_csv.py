@@ -18,7 +18,7 @@ def write_issues(response):
     "output a list of issues to csv"
     if not r.status_code == 200:
         raise Exception(r.status_code)
-    for issue in r.json:
+    for issue in r.json():
         print issue
         csvout.writerow([issue['number'], issue['title'].encode('utf-8'), issue['html_url']])
 
