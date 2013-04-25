@@ -11,7 +11,7 @@ import requests
 GITHUB_USER = ''
 GITHUB_PASSWORD = ''
 REPO = ''  # format is username/repo
-ISSUES_FOR_REPO_URL = 'https://api.github.com/repos/{}/issues'.format(REPO)
+ISSUES_FOR_REPO_URL = 'https://api.github.com/repos/%s/issues' % REPO
 AUTH = (GITHUB_USER, GITHUB_PASSWORD)
 
 def write_issues(response):
@@ -24,7 +24,7 @@ def write_issues(response):
 
 
 r = requests.get(ISSUES_FOR_REPO_URL, auth=AUTH)
-csvfile = '{}-issues.csv'.format(REPO.replace('/', '-'))
+csvfile = '%s-issues.csv' % (REPO.replace('/', '-'))
 csvout = csv.writer(open(csvfile, 'wb'))
 csvout.writerow(('id', 'Title', 'URL'))
 write_issues(r)
