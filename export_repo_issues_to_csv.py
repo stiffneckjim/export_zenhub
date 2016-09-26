@@ -1,10 +1,8 @@
 """
 Exports Issues from a specified repository to a CSV file
-
 Uses basic authentication (Github username + password) to retrieve Issues
 from a repository that username has access to. Supports Github API v3.
-
-Derived from https://gist.github.com/unbracketed/3380407
+Derived from https://gist.github.com/Billy-/96b16b7682a19a562b277c1ab52547a5
 """
 import csv
 import requests
@@ -22,9 +20,9 @@ def write_issues(response):
     "output a list of issues to csv"
     if not r.status_code == 200:
         raise Exception(r.status_code)
-    
+
     json.dump(r.json(), txtout, indent=4)
-    
+
     for issue in r.json():
         print issue['number']
         if 'pull_request' not in issue:
@@ -50,6 +48,10 @@ if 'link' in r.headers:
             [link.split(';') for link in
                 r.headers['link'].split(',')]])
     while 'last' in pages and 'next' in pages:
+        pages = dict(
+            [(rel[6:-1], url[url.index('<')+1:-1]) for url, rel in
+                [link.split(';') for link in
+                    r.headers['link'].split(',')]])
         print pages['next']
         r = requests.get(pages['next'], auth=AUTH)
         write_issues(r)
