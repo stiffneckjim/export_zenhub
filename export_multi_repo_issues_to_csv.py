@@ -1,4 +1,10 @@
-# Derived from https://gist.github.com/Kebiled/7b035d7518fdfd50d07e2a285aff3977
+"""
+Exports Issues from a list of repositories to individual CSV files
+Uses basic authentication (Github API Token and Zenhub API Token)
+to retrieve Issues from a repository that token has access to.
+Supports Github API v3 and ZenHubs current working API.
+Derived from https://gist.github.com/Kebiled/7b035d7518fdfd50d07e2a285aff3977
+"""
 import csv
 import requests
 import json
