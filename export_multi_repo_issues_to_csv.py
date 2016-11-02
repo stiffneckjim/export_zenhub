@@ -58,7 +58,7 @@ def get_issues(repo_data):
 
 REPO_LIST = [('***USER***/***REPO***', '***repoID***')]
 
-AUTH = ('token', '*GithubAPIToken*')
+AUTH = ('token', '***GithubAPIToken***')
 ACCESS_TOKEN = '?access_token=***ZenHubAPIToken***'
 csvfilename = 'PinnaclePSM-issues.csv'
 csvfile = open(csvfilename, 'wb')
