@@ -60,7 +60,7 @@ REPO_LIST = [('***USER***/***REPO***', '***repoID***')]
 
 AUTH = ('token', '***GithubAPIToken***')
 ACCESS_TOKEN = '?access_token=***ZenHubAPIToken***'
-csvfilename = 'PinnaclePSM-issues.csv'
+csvfilename = 'Repo-Issues.csv'
 csvfile = open(csvfilename, 'wb')
 csvout = csv.writer(csvfile)
 csvout.writerow(('Repository', 'Issue Number', 'Issue Title', 'Labels', 'Issue Author', 'Created At', 'Milestone', 'Assigned To', 'Issue Content', 'Estimate Value', 'Pipeline Name'))
