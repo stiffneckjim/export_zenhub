@@ -80,8 +80,8 @@ def get_issues(repo_data):
 PAYLOAD = ""
 REPO_LIST = [("*GITHUB REPO*", "*ZENHUB REPOID*")]
 
-AUTH = ('token', '*ZENHUB ACCESS TOKEN*')
-ACCESS_TOKEN = '?access_token=*GITHUB ACCESS TOKEN*'
+AUTH = ('token', '*GITHUB ACCESS TOKEN*')
+ACCESS_TOKEN = '?access_token=*ZENHUb ACCESS TOKEN*'
 
 TXTOUT = open('data.json', 'w')
 ISSUES = 0
