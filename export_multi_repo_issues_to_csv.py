@@ -1,7 +1,16 @@
 #!/usr/bin/env python
 import csv
-import requests
 import json
+import requests
+
+
+"""
+Exports Issues from a list of repositories to individual CSV files
+Uses basic authentication (Github API Token and Zenhub API Token)
+to retrieve Issues from a repository that token has access to.
+Supports Github API v3 and ZenHubs current working API.
+Derived from https://gist.github.com/Kebiled/7b035d7518fdfd50d07e2a285aff3977
+"""
 
 
 def write_issues(r, csvout, repo_name, repo_ID):
@@ -17,23 +26,30 @@ def write_issues(r, csvout, repo_name, repo_ID):
         global Payload
 
         if 'pull_request' not in issue:
-            global issues
-            issues += 1
+            global ISSUES
+            ISSUES += 1
             sAssigneeList = ''
-            sLabelList = ''
-            sMilestoneList = ''
+            sTag = ''
+            sCategory = ''
+            sPriority = ''
             for i in issue['assignees'] if issue['assignees'] else []:
-                sAssigneeList += i['login'] + '|'
+                sAssigneeList += i['login'] + ','
             for x in issue['labels'] if issue['labels'] else []:
-                sLabelList += x['name'] + '|'
+                if "Category" in x['name']:
+                    sCategory = x['name']
+                if "Tag" in x['name']:
+                    sTag = x['name']
+                if "Priority" in x['name']:
+                    sPriority = x['name']
+            lEstimateValue = zen_r.get('estimate', dict()).get('value', "")
+            sPipeline = zen_r.get('pipeline', dict()).get('name', "")
 
-            EstimateValue = zen_r.get('estimate', dict()).get('value', "")
-            Pipeline = zen_r.get('pipeline', dict()).get('name', "")
-
-            csvout.writerow([repo_name, issue['number'], issue['title'].encode('utf-8'), sLabelList,
-                             issue['user']['login'], issue['created_at'], issue['closed_at'], issue['milestone']['title'] if issue['milestone'] else "", sAssigneeList, issue['body'].encode('utf-8'), EstimateValue])
+            csvout.writerow([repo_name, issue['number'], issue['title'].encode('utf-8'), sCategory,
+                             sTag, sPriority, sPipeline, issue['user']['login'], issue['created_at'],
+                             issue['milestone']['title'] if issue['milestone'] else "",
+                             sAssigneeList[:-1], issue['body'].encode('utf-8'), lEstimateValue])
         else:
-            print 'You have skipped %s Pull Requests' % issues
+            print 'You have skipped %s Pull Requests' % ISSUES
 
 
 def get_issues(repo_data):
@@ -41,7 +57,7 @@ def get_issues(repo_data):
     repo_ID = repo_data[1]
     issues_for_repo_url = 'https://api.github.com/repos/%s/issues' % repo_name
     r = requests.get(issues_for_repo_url, auth=AUTH)
-    write_issues(r, csvout, repo_name, repo_ID)
+    write_issues(r, FILEOUTPUT, repo_name, repo_ID)
     # more pages? examine the 'link' header returned
     if 'link' in r.headers:
         pages = dict(
@@ -54,28 +70,29 @@ def get_issues(repo_data):
                  [link.split(';') for link in
                   r.headers['link'].split(',')]])
             r = requests.get(pages['next'], auth=AUTH)
-            write_issues(r, csvout, repo_name, repo_ID)
+            write_issues(r, FILEOUTPUT, repo_name, repo_ID)
             if pages['next'] == pages['last']:
                 break
 
-    csvout.writerow(['Total', issues])
+    FILEOUTPUT.writerow(['Total', ISSUES])
 
 
-Payload = ""
-REPO_LIST = [('*Organisation/User*/*rRepoName*', '*ZenhubRepoID*')]
+PAYLOAD = ""
+REPO_LIST = [("*GITHUB REPO*", "*ZENHUB REPOID*")]
 
-AUTH = ('token', '*ZenhubToken*')
-ACCESS_TOKEN = '?access_token=*GithubAccessToken*'
+AUTH = ('token', '*ZENHUB ACCESS TOKEN*')
+ACCESS_TOKEN = '?access_token=*GITHUB ACCESS TOKEN*'
 
-txtout = open('data.json', 'w')
-issues = 0
-csvfilename = '*Filename*.csv'
-csvfile = open(csvfilename, 'wb')
-csvout = csv.writer(csvfile)
-csvout.writerow(('Repository', 'Issue Number', 'Issue Title', 'Labels', 'Issue Author',
-                 'Created At', 'Closed At', 'Milestone', 'Assigned To', 'Issue Content', 'Estimate Value'))
+TXTOUT = open('data.json', 'w')
+ISSUES = 0
+FILENAME = '*Filename*'
+OPENFILE = open(FILENAME, 'wb')
+FILEOUTPUT = csv.writer(OPENFILE)
+FILEOUTPUT.writerow(('Repository', 'Issue Number', 'Issue Title', 'Category',
+                     'Tag', 'Priority', 'Pipeline', 'Issue Author',
+                     'Created At', 'Milestone', 'Assigned To', 'Issue Content', 'Estimate Value'))
 for repo_data in REPO_LIST:
     get_issues(repo_data)
-json.dump(Payload, open('data.json', 'w'), indent=4)
-txtout.close()
-csvfile.close()
+json.dump(PAYLOAD, open('data.json', 'w'), indent=4)
+TXTOUT.close()
+OPENFILE.close()
