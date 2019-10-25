@@ -6,9 +6,8 @@ import configparser
 
 """
 Usage:
-`touch config.ini`
 
-Add the following to newly created config.ini with appropriate values:
+Add the following to config.ini with appropriate values:
 [DEFAULT]
 AUTH_TOKEN =
 ZEN_ACCESS =
