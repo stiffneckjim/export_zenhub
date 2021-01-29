@@ -11,6 +11,8 @@ Add the following to config.ini with appropriate values:
 [DEFAULT]
 AUTH_TOKEN =
 ZEN_ACCESS =
+QUERY = # See https://developer.github.com/v3/issues/#list-repository-issues
+FILENAME = 
 
 
 Exports Issues from a list of repositories to individual CSV files
@@ -26,7 +28,7 @@ def write_issues(r, csvout, repo_name, repo_ID):
         raise Exception("Request returned status of:"+str(r.status_code))
 
     r_json = r.json()
-    print(str(len(r_json)) + ' issues found. Loading ZenHub data...')
+    print(str(len(r_json)) + ' issues loaded. Loading ZenHub data...')
     for issue in r_json:
         print(repo_name + ' issue: ' + str(issue['number']))
         zenhub_issue_url = 'https://api.zenhub.io/p1/repositories/' + str(repo_ID) + '/issues/' + str(issue['number']) + '?access_token=' + ACCESS_TOKEN
@@ -92,11 +94,10 @@ AUTH = ('token', config['DEFAULT']['AUTH_TOKEN'])
 ACCESS_TOKEN = config['DEFAULT']['ZEN_ACCESS']
 
 # See https://developer.github.com/v3/issues/#list-repository-issues
-# Equivalent frontend query: https://github.com/ceresfairfood/fairfood-issues/issues?q=is%3Aissue+updated%3A%3E%3D2020-11-23+sort%3Aupdated-asc+
-QUERY = 'since=2020-11-23&state=all&sort=updated&direction=asc'
+QUERY = config['DEFAULT']['QUERY']
 
 ISSUES = 0
-FILENAME = 'output2.csv'
+FILENAME = config['DEFAULT']['FILENAME']
 OPENFILE = open(FILENAME, 'wb')
 FILEOUTPUT = csv.writer(OPENFILE)
 
