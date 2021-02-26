@@ -11,11 +11,11 @@ Forked from https://gist.github.com/Jammizzle/ad2a94008b56a6f9d17cfdddf5a6dd4d
 Add the following to config.ini with appropriate values:
 ```
 [DEFAULT]
-AUTH_TOKEN =
-ZEN_ACCESS =
+AUTH_TOKEN = # your personal GitHub token
+ZEN_ACCESS = # the personal token provided by Zenhub
 
 QUERY = # See https://developer.github.com/v3/issues/#list-repository-issues
-FILENAME = 
+FILENAME = /Users/$USER/Downloads/export_zenhub.csv
 ```
 
 To build the query, you can use the web interface, but you need to translate some of the options. For example:
@@ -36,3 +36,4 @@ python export_multi_repo_issues_to_csv.py
 ## TODO
 1. Add a command-line parameter for filtering by date
 2. why not output to sdtout?
+3. Move repo list to config (REPO_LIST)
