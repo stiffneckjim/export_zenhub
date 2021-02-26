@@ -36,5 +36,6 @@ python export_multi_repo_issues_to_csv.py
 ## todo
 1. Add a command-line parameter for filtering by date
 2. rewrite "pipeline" column to "Closed" when state == "closed"
-3. why not output to sdtout?
-4. Move repo list to config (REPO_LIST)
+3. add tags
+4. why not output to sdtout?
+5. Move repo list to config (REPO_LIST)
