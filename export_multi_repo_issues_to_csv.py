@@ -31,6 +31,7 @@ def write_issues(r, csvout, repo_name, repo_ID):
     print(str(len(r_json)) + ' issues loaded. Loading ZenHub data...')
     for issue in r_json:
         print(repo_name + ' issue: ' + str(issue['number']))
+
         zenhub_issue_url = 'https://api.zenhub.io/p1/repositories/' + str(repo_ID) + '/issues/' + str(issue['number']) + '?access_token=' + ACCESS_TOKEN
         zen_r = requests.get(zenhub_issue_url).json()
         DateCreated = issue['created_at'][:-10]
@@ -38,28 +39,35 @@ def write_issues(r, csvout, repo_name, repo_ID):
         if 'pull_request' not in issue:
             global ISSUES
             ISSUES += 1
-            assignees, tag, category, priority = '', '', '', ''
+            assignees, tag, category, priority, labels = '', '', '', '', ''
             for i in issue['assignees'] if issue['assignees'] else []:
                 assignees += i['login'] + ','
-            # for x in issue['labels'] if issue['labels'] else []:
-            #     if "Category" in x['name']:
-            #         category = x['name'][11:11 + len(x['name'])]
-            #     if "Tag" in x['name']:
-            #         tag = x['name'][6:6 + len(x['name'])]
-            #     if "Priority" in x['name']:
-            #         priority = x['name'][11:11 + len(x['name'])]
+
+            for x in issue['labels'] if issue['labels'] else []:
+                # if "Category" in x['name']:
+                #     category = x['name'][11:11 + len(x['name'])]
+                # elif "Tag" in x['name']:
+                #     tag = x['name'][6:6 + len(x['name'])]
+                # elif "Priority" in x['name']:
+                #     priority = x['name'][11:11 + len(x['name'])]
+                # else:
+                    labels += x['name'] + ','
+
             estimate = zen_r.get('estimate', dict()).get('value', "")
-            if category != 'BUG':
+
+            if issue['state'] == 'closed':
+                Pipeline = 'Closed'
+            else:
                 Pipeline = zen_r.get('pipeline', dict()).get('name', "")
 
-                csvout.writerow([ #repo_name, 
-                                issue['number'], issue['title'].encode('utf-8'), 
-                                # category, tag, 
-                                assignees[:-1],
-                                #priority, 
-                                issue['state'],
-                                Pipeline, DateCreated, DateUpdated,
-                                estimate])
+            csvout.writerow([ #repo_name, 
+                            issue['number'], issue['title'].encode('utf-8'), 
+                            assignees[:-1],
+                            issue['state'],
+                            Pipeline, DateCreated, DateUpdated,
+                            labels[:-1],
+                            # category, tag, priority,
+                            estimate])
 
 def get_issues(repo_data):
     repo_name = repo_data[0]
@@ -109,7 +117,8 @@ FILEOUTPUT.writerow((#'Repository',
                      'State',
                      'Pipeline',
                      # 'Issue Author',
-                     'Created At', 'Updated At', 'Estimate'
+                     'Created At', 'Updated At', 
+                     'Labels', 'Estimate'
                      ))
 
 for repo_data in REPO_LIST:
