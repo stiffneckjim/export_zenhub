@@ -44,13 +44,13 @@ def write_issues(r, csvout, repo_name, repo_ID):
                 assignees += i['login'] + ','
 
             for x in issue['labels'] if issue['labels'] else []:
-                # if "Category" in x['name']:
-                #     category = x['name'][11:11 + len(x['name'])]
-                # elif "Tag" in x['name']:
-                #     tag = x['name'][6:6 + len(x['name'])]
-                # elif "Priority" in x['name']:
-                #     priority = x['name'][11:11 + len(x['name'])]
-                # else:
+                if "Category" in x['name']:
+                    category = x['name'][11:11 + len(x['name'])]
+                elif "Tag" in x['name']:
+                    tag = x['name'][6:6 + len(x['name'])]
+                elif "Priority" in x['name']:
+                    priority = x['name'][11:11 + len(x['name'])]
+                else:
                     labels += x['name'] + ','
 
             estimate = zen_r.get('estimate', dict()).get('value', "")
@@ -60,13 +60,17 @@ def write_issues(r, csvout, repo_name, repo_ID):
             else:
                 Pipeline = zen_r.get('pipeline', dict()).get('name', "")
 
-            csvout.writerow([ #repo_name, 
-                            issue['number'], issue['title'].encode('utf-8'), 
+            if not issue.get('body'):
+                issue['body'] = ''
+
+            csvout.writerow([repo_name, 
+                            issue['number'], issue['title'].encode('utf-8'),
+                            issue['body'].encode('utf-8'), 
                             assignees[:-1],
                             issue['state'],
                             Pipeline, DateCreated, DateUpdated,
                             labels[:-1],
-                            # category, tag, priority,
+                            category, tag, priority,
                             estimate])
 
 def get_issues(repo_data):
@@ -106,17 +110,18 @@ QUERY = config['DEFAULT']['QUERY']
 
 ISSUES = 0
 FILENAME = config['DEFAULT']['FILENAME']
-OPENFILE = open(FILENAME, 'wb')
+OPENFILE = open(FILENAME, 'w')
 FILEOUTPUT = csv.writer(OPENFILE)
 
-FILEOUTPUT.writerow((#'Repository', 
-                     'Issue Number', 'Issue Title', 
-                     #'Category', 'Tag', 
+FILEOUTPUT.writerow(('Repository', 
+                     'Issue Number', 'Issue Title',
+                     'Description', 
+                     'Category', 'Tag', 
                      'Assigned To',
-                     # 'Priority', 
+                     'Priority', 
                      'State',
                      'Pipeline',
-                     # 'Issue Author',
+                     'Issue Author',
                      'Created At', 'Updated At', 
                      'Labels', 'Estimate'
                      ))
