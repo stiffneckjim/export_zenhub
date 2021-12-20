@@ -63,14 +63,14 @@ def write_issues(r, csvout, repo_name, repo_ID):
             if not issue.get('body'):
                 issue['body'] = ''
 
-            csvout.writerow([repo_name, 
+            csvout.writerow([ #repo_name, 
                             issue['number'], issue['title'].encode('utf-8'),
-                            issue['body'].encode('utf-8'), 
+                            #issue['body'].encode('utf-8'), 
                             assignees[:-1],
                             issue['state'],
                             Pipeline, DateCreated, DateUpdated,
                             labels[:-1],
-                            category, tag, priority,
+                            #category, tag, priority,
                             estimate])
 
 def get_issues(repo_data):
@@ -113,15 +113,15 @@ FILENAME = config['DEFAULT']['FILENAME']
 OPENFILE = open(FILENAME, 'w')
 FILEOUTPUT = csv.writer(OPENFILE)
 
-FILEOUTPUT.writerow(('Repository', 
+FILEOUTPUT.writerow(( #'Repository', 
                      'Issue Number', 'Issue Title',
-                     'Description', 
-                     'Category', 'Tag', 
+                     #'Description', 
+                     #'Category', 'Tag', 
                      'Assigned To',
-                     'Priority', 
+                     # 'Priority', 
                      'State',
                      'Pipeline',
-                     'Issue Author',
+                     #'Issue Author',
                      'Created At', 'Updated At', 
                      'Labels', 'Estimate'
                      ))
