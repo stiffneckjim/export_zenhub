@@ -41,9 +41,9 @@ python export_multi_repo_issues_to_csv.py
 
 ## TODO
 
-[ ] Add back handling multiple GitHub repos and ZenHub boards
-[ ] Add command-line parameters, including for filtering by date
-[ ] Add a help message for those parameters
-[ ] Flag to output to STDOUT
-[x] Move repo list to config (REPO_LIST)
-[ ] Optional config to whitelist included fields (eg: "FIELDS": "number,title,assignees,description")
+- [ ] Add back handling multiple GitHub repos and ZenHub boards
+- [ ] Add command-line parameters, including for filtering by date
+- [ ] Add a help message for those parameters
+- [ ] Flag to output to STDOUT
+- [x] Move repo list to config (REPO_LIST)
+- [ ] Optional config to whitelist included fields (eg: "FIELDS": "number,title,assignees,description")
